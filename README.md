@@ -183,10 +183,12 @@ To set up the development environment:
 
     ```bash
     pip install -r requirements.txt
+    ```
 
 Run tests using pytest:
     ```bash
     pytest
+    ```
 
 **Contributing**
 
