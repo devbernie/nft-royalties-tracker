@@ -181,14 +181,15 @@ For questions or support, contact <dev.bernie@gmail.com>.
 
 To set up the development environment:
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+pip install -r requirements.txt
+```
 
 Run tests using pytest:
-    ```bash
-    pytest
-    ```
+
+```bash
+pytest
+```
 
 **Contributing**
 
