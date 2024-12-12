@@ -176,29 +176,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 **Contact**
 
 For questions or support, contact <dev.bernie@gmail.com>.
-
-**Development**
-
-To set up the development environment:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run tests using pytest:
-
-```bash
-pytest
-```
-
-**Contributing**
-
-Contributions are welcome! Please open an issue or submit a pull request with your improvements.
-
-**License**
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-**Contact**
-
-For questions or support, contact <dev.bernie@gmail.com>.
