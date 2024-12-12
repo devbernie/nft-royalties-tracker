@@ -1,124 +1,74 @@
-**NFT Royalties Tracker**
+# NFT Royalties Tracker
 
 NFT Royalties Tracker is a powerful CLI tool designed to help artists and content creators track and manage royalties for NFTs on the Cardano blockchain. With this tool, you can calculate royalties, split revenues among contributors, and export detailed reports.
 
-**Features**
+## 1. Current Situation
 
-- **List NFT Transactions:** Retrieve and display NFT-related transactions from a Cardano wallet.
-- **Calculate Royalties:** Compute total royalties earned from a list of transactions.
-- **Split Royalties:** Distribute royalties among multiple contributors based on predefined shares.
-- **Export Reports:** Generate transaction reports in CSV or PDF format.
+NFTs have become a significant trend in the blockchain space, providing opportunities for artists and content creators. However, tracking and managing royalties from NFT resales often depend on third-party platforms such as marketplaces. This reliance leads to a lack of transparency and autonomy for artists, especially when quick data retrieval or revenue sharing is needed.
 
-**Installation**
+## 2. Opportunities
 
-1. Clone the repository:
-2. git clone <https://github.com/yourusername/nft-royalties-tracker.git>
+- **Practical Demand:** Artists and creators increasingly need independent tools to manage royalties without relying on marketplaces.
+- **Scalability:** Cardano, with its growing NFT community, offers a large market for tools like NFT Royalties Tracker.
+- **Transparency:** This CLI tool provides clear and accurate information directly from the blockchain.
 
-cd nft-royalties-tracker
+## 3. Challenges
 
-1. Install the tool using pip:
-    ```bash
-    pip install .
+- **Complex Data Handling:** NFT transactions may involve multiple contributors and complex royalty structures.
+- **Standards Integration:** Ensuring compliance with new standards like CIP-68 on Cardano.
+- **User Experience:** Making the CLI tool user-friendly for non-technical users.
 
-**Usage**
+## 4. Solution
 
-After installation, you can use the nft-tracker command. Below are the available commands:
+NFT Royalties Tracker is an open-source CLI tool offering:
+- **Automated Royalties Calculation:** Based on transaction data from the blockchain.
+- **Revenue Sharing:** Supports royalty distribution among multiple contributors.
+- **Report Exporting:** Easily create detailed reports in CSV or PDF formats.
 
-**List Transactions**
+## 5. Usage Demo
 
-Retrieve a list of NFT-related transactions from a Cardano wallet.
-    ```bash
-    nft-tracker list-transactions --address &lt;CardanoWalletAddress&gt;
-
-**Calculate Total Royalties**
-
-Compute total royalties from a JSON file containing transaction data.
-    ```bash
-    nft-tracker calculate --transactions transactions.json
-
-**Calculate Contributor Shares**
-
-Distribute royalties among contributors based on their shares.
-    ```bash
-    nft-tracker contributor-shares --transactions transactions.json --contributors contributors.json
-
-**Export Reports**
-
-Generate a report of NFT transactions in CSV or PDF format.
-    ```bash
-    nft-tracker export-report --transactions transactions.json --output report.pdf --format pdf
-
-**NFT Royalties Tracker**
-
-NFT Royalties Tracker is a powerful CLI tool designed to help artists and content creators track and manage royalties for NFTs on the Cardano blockchain. With this tool, you can calculate royalties, split revenues among contributors, and export detailed reports.
-
-**Features**
-
-- **List NFT Transactions:** Retrieve and display NFT-related transactions from a Cardano wallet.
-- **Calculate Royalties:** Compute total royalties earned from a list of transactions.
-- **Split Royalties:** Distribute royalties among multiple contributors based on predefined shares.
-- **Export Reports:** Generate transaction reports in CSV or PDF format.
-
-**Installation**
+### **Installation**
 
 1. Clone the repository:
-
    ```bash
-   git clone <https://github.com/yourusername/nft-royalties-tracker.git>
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
+   git clone https://github.com/yourusername/nft-royalties-tracker.git
    cd nft-royalties-tracker
    ```
 
-3. Install the tool using pip:
-
+2. Install the tool:
    ```bash
    pip install .
    ```
 
-**Usage**
+### **CLI Commands**
 
-After installation, you can use the `nft-tracker` command. Below are the available commands:
-
-**List Transactions**
-
-Retrieve a list of NFT-related transactions from a Cardano wallet.
-
+#### **List Transactions**
+Retrieve NFT transactions from a Cardano wallet:
 ```bash
 nft-tracker list-transactions --address <CardanoWalletAddress>
 ```
 
-**Calculate Total Royalties**
-
-Compute total royalties from a JSON file containing transaction data.
-
+#### **Calculate Total Royalties**
+Compute total royalties from a JSON file containing transaction data:
 ```bash
 nft-tracker calculate --transactions transactions.json
 ```
 
-**Calculate Contributor Shares**
-
-Distribute royalties among contributors based on their shares.
-
+#### **Calculate Contributor Shares**
+Distribute royalties among contributors:
 ```bash
 nft-tracker contributor-shares --transactions transactions.json --contributors contributors.json
 ```
 
-**Export Reports**
-
-Generate a report of NFT transactions in CSV or PDF format.
-
+#### **Export Reports**
+Generate NFT transaction reports in CSV or PDF format:
 ```bash
 nft-tracker export-report --transactions transactions.json --output report.pdf --format pdf
 ```
 
-**Example JSON Files**
+### **Example JSON Files**
 
-**Transactions File (`transactions.json`)**
-
+#### Transactions File (`transactions.json`)
 ```json
 [
   {
@@ -136,8 +86,7 @@ nft-tracker export-report --transactions transactions.json --output report.pdf -
 ]
 ```
 
-**Contributors File (`contributors.json`)**
-
+#### Contributors File (`contributors.json`)
 ```json
 [
   {
@@ -151,28 +100,37 @@ nft-tracker export-report --transactions transactions.json --output report.pdf -
 ]
 ```
 
-**Development**
+## 6. Conclusion
+
+NFT Royalties Tracker provides a practical and efficient solution for artists and creators to manage NFT royalties. This tool not only enhances transparency but also improves user autonomy within the blockchain ecosystem.
+
+## 7. Future Improvements and Development Directions
+
+- **Integrating New Standards:** Support for CIP-68 and advanced NFT standards.
+- **Automation Features:** Directly distribute royalties to contributor wallets.
+- **User Interface:** Develop a GUI version to reach non-technical users.
+- **Multi-Blockchain Support:** Expand to other blockchains like Ethereum and Solana.
+
+## Development
 
 To set up the development environment:
-
 ```bash
 pip install -r requirements.txt
 ```
 
-Run tests using pytest:
-
+Run tests using `pytest`:
 ```bash
 pytest
 ```
 
-**Contributing**
+## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request with your improvements.
 
-**License**
+## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-**Contact**
+## Contact
 
-For questions or support, contact <dev.bernie@gmail.com>.
+For questions or support, contact [your.email@example.com](mailto:your.email@example.com).
