@@ -7,7 +7,7 @@ import json
 load_dotenv()
 
 API_KEY = os.getenv("MAESTRO_API_KEY")
-API_ENV = os.getenv("API_ENV", "preprod")  # Default to 'preprod' if not specified
+API_ENV = os.getenv("API_ENV", "preview")  # Default to 'preprod' if not specified, but this is 'preview' so I put to this
 BASE_URL = f"https://{API_ENV}.gomaestro-api.org/v1"  # Dynamic API endpoint based on environment
 
 
