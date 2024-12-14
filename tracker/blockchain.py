@@ -1,16 +1,15 @@
-# File: tracker/blockchain.py
-
 import requests
 import os
 from dotenv import load_dotenv
-import subprocess
 import json
 
 # Load environment variables
 load_dotenv()
 
 API_KEY = os.getenv("MAESTRO_API_KEY")
-BASE_URL = "https://preprod.gomaestro-api.org/v1"  # Preprod API endpoint
+API_ENV = os.getenv("API_ENV", "preprod")  # Default to 'preprod' if not specified
+BASE_URL = f"https://{API_ENV}.gomaestro-api.org/v1"  # Dynamic API endpoint based on environment
+
 
 def get_transactions(address):
     """
@@ -22,27 +21,13 @@ def get_transactions(address):
     """
     headers = {"Authorization": f"Bearer {API_KEY}"}
     url = f"{BASE_URL}/addresses/{address}/utxos"
-    
+
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # Raise an HTTPError for bad responses
         return response.json()
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch transactions: {e}")
-
-def run_cli_command(command):
-    """
-    Run a Cardano CLI command and return the output.
-    Args:
-        command (list): Command arguments as a list.
-    Returns:
-        dict: Parsed JSON output from the CLI.
-    """
-    try:
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-        return json.loads(result.stdout)
-    except subprocess.CalledProcessError as e:
-        raise ValueError(f"CLI command failed: {e.stderr}")
 
 
 def get_metadata(transaction_id):
@@ -91,5 +76,4 @@ def is_nft_transaction(transaction):
     Returns:
         bool: True if the transaction involves NFTs, False otherwise.
     """
-    # Example logic: Look for specific metadata or tags
     return "policy_id" in transaction or "asset" in transaction

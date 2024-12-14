@@ -1,3 +1,5 @@
+# tests/test_royalties.py
+
 import pytest
 from tracker.royalties import calculate_royalties, split_royalties, validate_royalty_structure, calculate_contributor_shares
 

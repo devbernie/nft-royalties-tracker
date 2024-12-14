@@ -1,10 +1,8 @@
-# File: tracker/cli.py
-
 import click
-import os
 from tracker.utils import read_json, write_csv, write_pdf, log_message
 from tracker.blockchain import get_transactions, get_metadata
 from tracker.royalties import calculate_royalties, calculate_contributor_shares
+
 
 @click.group()
 def cli():
@@ -38,7 +36,7 @@ def calculate(address):
     Calculate total royalties from a list of NFT transactions using Maestro API.
     """
     try:
-        transactions = get_transactions(address)  # Sử dụng Maestro API
+        transactions = get_transactions(address)
         total_royalties = calculate_royalties(transactions)
         click.echo(f"Total royalties: {total_royalties:.2f} ADA")
     except Exception as e:
@@ -53,7 +51,7 @@ def contributor_shares(address, contributors):
     Calculate royalty shares among contributors using Maestro API.
     """
     try:
-        transactions = get_transactions(address)  # Sử dụng Maestro API
+        transactions = get_transactions(address)
         contributors_data = read_json(contributors)
         shares = calculate_contributor_shares(transactions, contributors_data)
         for contributor, amount in shares.items():
@@ -71,7 +69,7 @@ def export_report(address, output, format):
     Export a report from the list of NFT transactions.
     """
     try:
-        transactions = get_transactions(address)  # Sử dụng Maestro API
+        transactions = get_transactions(address)
         if not transactions:
             click.echo(f"No transactions found for address: {address}")
             return
