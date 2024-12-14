@@ -45,25 +45,60 @@ NFT Royalties Tracker is an open-source CLI tool offering:
 #### **List Transactions**
 Retrieve NFT transactions from a Cardano wallet:
 ```bash
-nft-tracker list-transactions --address <CardanoWalletAddress>
+python -m tracker.cli list-transactions --address <Cardano_wallet_address>
 ```
+Example:
+```bash
+python -m tracker.cli list-transactions --address addr_test1qp28mg795hwlnptmdyr47zcrc87m8kk0pwvxrwrw24ppdzzquca5pnk4ew6068z6wu4tc9ee2rr2rnn06spkkvj0llqq7fnt8u
+```
+Example Output:
+```bash
+{'value': '10000000000', 'tx_hash': 'd3b8b38df483babb8c2ba5d1d20b798024784c29a51a7637ee6e99da0ea6fc16', 'tx_index': 0, 'asset_list': [], 'block_time': 1734005201, 'datum_hash': None, 'block_height': 2762260, 'inline_datum': None, 'reference_script': None}
+```
+
 
 #### **Calculate Total Royalties**
 Compute total royalties from a JSON file containing transaction data:
 ```bash
-nft-tracker calculate --transactions transactions.json
+python -m tracker.cli calculate --address <Cardano_wallet_address>
 ```
+Example:
+```bash
+python -m tracker.cli calculate --address addr_test1qp28mg795hwlnptmdyr47zcrc87m8kk0pwvxrwrw24ppdzzquca5pnk4ew6068z6wu4tc9ee2rr2rnn06spkkvj0llqq7fnt8u
+```
+Example Output:
+```bash
+Total royalties: 2000.00 ADA
+```
+
 
 #### **Calculate Contributor Shares**
 Distribute royalties among contributors:
 ```bash
-nft-tracker contributor-shares --transactions transactions.json --contributors contributors.json
+python -m tracker.cli contributor-shares --address <Cardano_wallet_address> --contributors <contributors_file_path>
+```
+Example:
+```bash
+python -m tracker.cli contributor-shares --address addr_test1qp28mg795hwlnptmdyr47zcrc87m8kk0pwvxrwrw24ppdzzquca5pnk4ew6068z6wu4tc9ee2rr2rnn06spkkvj0llqq7fnt8u --contributors contributors.json
+```
+Example Output:
+```bash
+Alice: 1000.00 ADA
+Bob: 1000.00 ADA
 ```
 
 #### **Export Reports**
 Generate NFT transaction reports in CSV or PDF format:
 ```bash
-nft-tracker export-report --transactions transactions.json --output report.pdf --format pdf
+python -m tracker.cli export-report --address <Cardano_wallet_address> --output <output_file_name> --format <output_format>
+```
+Example:
+```bash
+python -m tracker.cli export-report --address addr_test1qp28mg795hwlnptmdyr47zcrc87m8kk0pwvxrwrw24ppdzzquca5pnk4ew6068z6wu4tc9ee2rr2rnn06spkkvj0llqq7fnt8u --output report.csv --format csv
+```
+
+```bash
+python -m tracker.cli export-report --address addr_test1qp28mg795hwlnptmdyr47zcrc87m8kk0pwvxrwrw24ppdzzquca5pnk4ew6068z6wu4tc9ee2rr2rnn06spkkvj0llqq7fnt8u --output report.pdf --format pdf
 ```
 
 ### **Example JSON Files**
@@ -133,4 +168,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For questions or support, contact [your.email@example.com](mailto:your.email@example.com).
+For questions or support, contact [dev.bernie@gmail.com](mailto:dev.bernie@gmail.com).
