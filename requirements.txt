@@ -5,3 +5,7 @@ reportlab
 pytest
 pytest-mock
 setuptools
+blockfrost-python
+python-dotenv
+urllib
+subprocess

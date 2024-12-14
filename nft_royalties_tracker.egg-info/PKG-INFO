@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: nft_royalties_tracker
+Version: 1.0.0
+Summary: A CLI tool for tracking NFT royalties on the Cardano blockchain.
+Home-page: https://github.com/devbernie/nft-royalties-tracker
+Author: Your Name
+Author-email: dev.bernie@gmail.com
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.8
+License-File: LICENSE
+Requires-Dist: click>=8.0
+Requires-Dist: requests>=2.0
+Requires-Dist: reportlab>=3.0

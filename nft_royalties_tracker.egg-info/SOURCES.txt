@@ -1,0 +1,17 @@
+LICENSE
+README.md
+setup.py
+nft_royalties_tracker.egg-info/PKG-INFO
+nft_royalties_tracker.egg-info/SOURCES.txt
+nft_royalties_tracker.egg-info/dependency_links.txt
+nft_royalties_tracker.egg-info/entry_points.txt
+nft_royalties_tracker.egg-info/requires.txt
+nft_royalties_tracker.egg-info/top_level.txt
+tests/__init__.py
+tests/test_blockchain.py
+tests/test_royalties.py
+tracker/__init__.py
+tracker/blockchain.py
+tracker/cli.py
+tracker/royalties.py
+tracker/utils.py
