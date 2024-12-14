@@ -3,7 +3,7 @@
 import pytest
 from tracker.royalties import calculate_royalties, split_royalties, validate_royalty_structure, calculate_contributor_shares
 
-TOLERANCE = 1e-9  # Ngưỡng sai số cho các phép so sánh dấu chấm động
+TOLERANCE = 1e-9  # Floating-point comparison tolerance
 
 def test_calculate_royalties():
     transactions = [
@@ -13,6 +13,7 @@ def test_calculate_royalties():
     total = calculate_royalties(transactions)
     assert abs(total - 250.0) < TOLERANCE
 
+
 def test_split_royalties():
     transaction = {"metadata": {"sale_price": 1000, "royalty_percentage": 10}}
     contributors = [{"name": "Alice", "share": 50}, {"name": "Bob", "share": 50}]
@@ -20,11 +21,13 @@ def test_split_royalties():
     assert abs(splits["Alice"] - 50.0) < TOLERANCE
     assert abs(splits["Bob"] - 50.0) < TOLERANCE
 
+
 def test_validate_royalty_structure():
     valid_metadata = {"sale_price": 1000, "royalty_percentage": 5}
     invalid_metadata = {"sale_price": 1000}
     assert validate_royalty_structure(valid_metadata) is True
     assert validate_royalty_structure(invalid_metadata) is False
+
 
 def test_calculate_contributor_shares():
     transactions = [

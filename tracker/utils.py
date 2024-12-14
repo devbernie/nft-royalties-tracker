@@ -1,29 +1,31 @@
-# File: tracker/utils.py
+# tracker/utils.py
 
 import json
 import csv
+import os
+import logging
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-
 def read_json(file_path):
     """
-    Đọc dữ liệu JSON từ file.
+    Read JSON data from a file.
     Args:
-        file_path (str): Đường dẫn file JSON.
+        file_path (str): Path to the JSON file.
     Returns:
-        dict: Dữ liệu JSON.
+        dict: JSON data.
     """
+    file_path = os.path.expanduser(file_path)
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.load(file)
 
 
 def write_csv(data, file_path):
     """
-    Xuất dữ liệu ra file CSV.
+    Export data to a CSV file.
     Args:
-        data (list): Danh sách các hàng dữ liệu.
-        file_path (str): Đường dẫn file CSV xuất ra.
+        data (list): List of rows of data.
+        file_path (str): Path to the output CSV file.
     """
     with open(file_path, 'w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
@@ -33,62 +35,42 @@ def write_csv(data, file_path):
 
 def write_pdf(data, file_path, title="Report"):
     """
-    Xuất dữ liệu ra file PDF.
+    Export data to a PDF file.
     Args:
-        data (list): Dữ liệu cần xuất (danh sách giao dịch hoặc royalties).
-        file_path (str): Đường dẫn file PDF xuất ra.
-        title (str): Tiêu đề báo cáo.
+        data (list): Data to export (list of transactions or royalties).
+        file_path (str): Path to the output PDF file.
+        title (str): Title of the report.
     """
     c = canvas.Canvas(file_path, pagesize=letter)
     _, height = letter
 
-    # Tiêu đề
+    # Title
     c.setFont("Helvetica-Bold", 16)
     c.drawString(50, height - 50, title)
 
-    # Nội dung dữ liệu
+    # Data content
     c.setFont("Helvetica", 12)
     y = height - 100
     for row in data:
         text = ", ".join(f"{key}: {value}" for key, value in row.items())
         c.drawString(50, y, text)
         y -= 20
-        if y < 50:  # Nếu hết trang
+        if y < 50:  # If end of page
             c.showPage()
             y = height - 50
 
     c.save()
 
 
-def format_currency(value, currency="ADA"):
-    """
-    Định dạng số thành chuỗi có gắn đơn vị tiền tệ.
-    Args:
-        value (float): Giá trị số.
-        currency (str): Loại tiền tệ.
-    Returns:
-        str: Chuỗi định dạng tiền tệ.
-    """
-    return f"{value:,.2f} {currency}"
-
-
-def validate_address(address):
-    """
-    Xác minh địa chỉ ví Cardano hợp lệ.
-    Args:
-        address (str): Địa chỉ ví Cardano.
-    Returns:
-        bool: True nếu hợp lệ, False nếu không hợp lệ.
-    """
-    return len(address) > 50 and address.startswith("addr")
-
+# Configure logging at the application level
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def log_message(message, level="info"):
     """
-    Ghi log cho ứng dụng.
+    Log messages for the application.
     Args:
-        message (str): Nội dung log.
-        level (str): Mức độ log (info, warning, error).
+        message (str): Log message.
+        level (str): Log level (info, warning, error).
     """
-    levels = {"info": "INFO", "warning": "WARNING", "error": "ERROR"}
-    print(f"[{levels.get(level, 'INFO')}] {message}")
+    log_func = getattr(logging, level, logging.info)
+    log_func(message)

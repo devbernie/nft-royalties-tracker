@@ -1,7 +1,23 @@
+# tracker/cli.py
+
 import click
 from tracker.utils import read_json, write_csv, write_pdf, log_message
 from tracker.blockchain import get_transactions, get_metadata
 from tracker.royalties import calculate_royalties, calculate_contributor_shares
+
+
+def validate_contributors(contributors):
+    """
+    Validate contributor structure for share calculation.
+    Args:
+        contributors (list): List of contributor dictionaries.
+    Returns:
+        bool: True if all contributors are valid, else raises ValueError.
+    """
+    for contributor in contributors:
+        if "name" not in contributor or "share" not in contributor:
+            raise ValueError("Each contributor must include 'name' and 'share' fields.")
+    return True
 
 
 @click.group()
@@ -16,12 +32,12 @@ def cli():
 @click.option('--address', required=True, help='Cardano wallet address.')
 def list_transactions(address):
     """
-    List NFT transactions from a wallet address using Maestro API.
+    List NFT transactions from a wallet address using Koios API.
     """
     try:
         transactions = get_transactions(address)
         if not transactions:
-            click.echo(f"No transactions found for address: {address}")
+            click.echo(f"No transactions found for address: {address}. Ensure the address is valid and transactions are available.")
         else:
             for tx in transactions:
                 click.echo(tx)
@@ -33,7 +49,7 @@ def list_transactions(address):
 @click.option('--address', required=True, help='Cardano wallet address.')
 def calculate(address):
     """
-    Calculate total royalties from a list of NFT transactions using Maestro API.
+    Calculate total royalties from a list of NFT transactions using Koios API.
     """
     try:
         transactions = get_transactions(address)
@@ -48,14 +64,20 @@ def calculate(address):
 @click.option('--contributors', required=True, type=click.Path(exists=True), help='JSON file containing contributor information.')
 def contributor_shares(address, contributors):
     """
-    Calculate royalty shares among contributors using Maestro API.
+    Calculate royalty shares among contributors using Koios API.
     """
     try:
         transactions = get_transactions(address)
         contributors_data = read_json(contributors)
+        
+        # Validate contributors before calculation
+        validate_contributors(contributors_data)
+        
         shares = calculate_contributor_shares(transactions, contributors_data)
         for contributor, amount in shares.items():
             click.echo(f"{contributor}: {amount:.2f} ADA")
+    except ValueError as ve:
+        click.echo(f"Validation Error: {ve}")
     except Exception as e:
         log_message(str(e), level="error")
 
@@ -71,7 +93,7 @@ def export_report(address, output, format):
     try:
         transactions = get_transactions(address)
         if not transactions:
-            click.echo(f"No transactions found for address: {address}")
+            click.echo(f"No transactions found for address: {address}. Ensure the address is valid and transactions are available.")
             return
         if format == 'csv':
             write_csv(transactions, output)

@@ -1,69 +1,81 @@
+# tracker/blockchain.py
+
 import requests
 import os
 from dotenv import load_dotenv
-import json
 
 # Load environment variables
 load_dotenv()
 
-API_KEY = os.getenv("MAESTRO_API_KEY")
-API_ENV = os.getenv("API_ENV", "preview")  # Default to 'preprod' if not specified, but this is 'preview' so I put to this
-BASE_URL = f"https://{API_ENV}.gomaestro-api.org/v1"  # Dynamic API endpoint based on environment
+# Use BASE_URL from .env file
+BASE_URL = os.getenv("BASE_URL", "").strip()
+if not BASE_URL:
+    raise ValueError("BASE_URL environment variable is not set or empty.")
+
+def get_headers():
+    """
+    Generate headers for API requests.
+    """
+    return {
+        "Content-Type": "application/json"
+    }
 
 
 def get_transactions(address):
     """
-    Retrieve transactions related to a Cardano address using Maestro API.
+    Retrieve transactions (UTxOs) related to a Cardano address using Koios API.
     Args:
         address (str): Cardano wallet address.
     Returns:
-        list: List of transactions.
+        list: List of transactions (UTxOs).
     """
-    headers = {"Authorization": f"Bearer {API_KEY}"}
-    url = f"{BASE_URL}/addresses/{address}/utxos"
+    url = f"{BASE_URL}/address_info"
+    payload = {"_addresses": [address]}
 
     try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        return response.json()
+        response = requests.post(url, json=payload, headers=get_headers())
+        response.raise_for_status()
+        address_info = response.json()
+        return address_info[0]["utxo_set"] if address_info else []
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch transactions: {e}")
 
 
 def get_metadata(transaction_id):
     """
-    Retrieve metadata of a transaction using Maestro API.
+    Retrieve metadata of a transaction using Koios API.
     Args:
         transaction_id (str): Transaction ID on the blockchain.
     Returns:
         dict: Metadata of the transaction.
     """
-    headers = {"Authorization": f"Bearer {API_KEY}"}
-    url = f"{BASE_URL}/transactions/{transaction_id}/metadata"
+    url = f"{BASE_URL}/tx_metadata"
+    payload = {"_tx_hashes": [transaction_id]}
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.post(url, json=payload, headers=get_headers())
         response.raise_for_status()
-        return response.json()
+        tx_metadata = response.json()
+        return tx_metadata[0]["metadata"] if tx_metadata else {}
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch metadata for transaction {transaction_id}: {e}")
 
 
 def get_policy_assets(policy_id):
     """
-    Retrieve all assets under a specific policy ID using Maestro API.
+    Retrieve all assets under a specific policy ID using Koios API.
     Args:
         policy_id (str): Policy ID.
     Returns:
         list: List of assets.
     """
-    headers = {"Authorization": f"Bearer {API_KEY}"}
-    url = f"{BASE_URL}/policies/{policy_id}/assets"
+    url = f"{BASE_URL}/asset_list"
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=get_headers())
         response.raise_for_status()
-        return response.json()
+        assets = response.json()
+        return [asset for asset in assets if asset["policy_id"]["value"] == policy_id]
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch assets for policy {policy_id}: {e}")
 

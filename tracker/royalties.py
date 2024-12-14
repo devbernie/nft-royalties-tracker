@@ -11,13 +11,14 @@ def calculate_royalties(transactions):
     total_royalties = 0.0
     for tx in transactions:
         metadata = tx.get("metadata", {})
-        royalty_percentage = metadata.get("royalty_percentage", 0)
-        sale_price = metadata.get("sale_price", 0)
+        if "sale_price" not in metadata or "royalty_percentage" not in metadata:
+            continue  # Skip invalid transactions
 
-        royalty = (royalty_percentage / 100) * sale_price
-        total_royalties += royalty
-
+        royalty_percentage = metadata["royalty_percentage"]
+        sale_price = metadata["sale_price"]
+        total_royalties += (royalty_percentage / 100) * sale_price
     return total_royalties
+
 
 
 def split_royalties(transaction, contributors):
@@ -91,3 +92,12 @@ def calculate_contributor_shares(transactions, contributors):
             contributor_totals[name] += (share / total_share_percentage) * total_royalty
 
     return contributor_totals
+
+
+def normalize_shares(contributors):
+    total = sum(c.get("share", 0) for c in contributors)
+    if total == 0:
+        raise ValueError("Total share percentage cannot be zero.")
+    for c in contributors:
+        c["normalized_share"] = c["share"] / total
+    return contributors
