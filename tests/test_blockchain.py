@@ -1,5 +1,5 @@
 import pytest
-import subprocess
+import requests
 from tracker.blockchain import get_transactions, get_metadata, get_policy_assets, is_nft_transaction
 
 @pytest.fixture
@@ -10,42 +10,68 @@ def mock_transactions():
     ]
 
 @pytest.fixture
-def mock_socket_path():
-    return "cardano-node-10.1.3-win64/db/node.socket"
+def mock_address():
+    return "addr_test1qpz..."
 
-def test_get_transactions_success(mocker, mock_socket_path):
-    mock_output = """
-    TxHash                                 TxIx        Amount
-    --------------------------------------------------------------------------------------
-    abc123...                              0           1000000 lovelace + 1 policy1.asset1
-    def456...                              1           2000000 lovelace + 1 policy1.asset2
-    """
-    mocker.patch("subprocess.run", return_value=mocker.Mock(stdout=mock_output, returncode=0))
-    transactions = get_transactions("addr_test1...", mock_socket_path)  # Sử dụng mock_socket_path
+@pytest.fixture
+def mock_transaction_id():
+    return "abc123..."
+
+@pytest.fixture
+def mock_policy_id():
+    return "policy_id_123"
+
+@pytest.fixture
+def mock_maestro_api_key():
+    return "test_api_key"
+
+def test_get_transactions_success(mocker, mock_address):
+    mock_response = [
+        {"tx_hash": "abc123...", "tx_index": 0, "amount": [{"unit": "lovelace", "quantity": "1000000"}]},
+        {"tx_hash": "def456...", "tx_index": 1, "amount": [{"unit": "lovelace", "quantity": "2000000"}]}
+    ]
+    mocker.patch("requests.get", return_value=mocker.Mock(status_code=200, json=lambda: mock_response))
+
+    transactions = get_transactions(mock_address)
     assert len(transactions) == 2
     assert transactions[0]["tx_hash"] == "abc123..."
+    assert transactions[1]["tx_index"] == 1
 
 
-def test_get_transactions_error(mocker):
-    mocker.patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "cardano-cli", stderr="Failed to fetch transactions"))
+def test_get_transactions_error(mocker, mock_address):
+    mocker.patch("requests.get", side_effect=requests.exceptions.RequestException("Connection error"))
     with pytest.raises(ValueError, match="Failed to fetch transactions"):
-        get_transactions("addr_invalid", mock_socket_path)
+        get_transactions(mock_address)
 
 
-def test_get_metadata_success(mocker):
-    mock_output = '{"key": "value"}'
-    mocker.patch("subprocess.run", return_value=mocker.Mock(stdout=mock_output, returncode=0))
-    metadata = get_metadata("tx_hash")
+def test_get_metadata_success(mocker, mock_transaction_id):
+    mock_response = {"key": "value"}
+    mocker.patch("requests.get", return_value=mocker.Mock(status_code=200, json=lambda: mock_response))
+
+    metadata = get_metadata(mock_transaction_id)
     assert metadata["key"] == "value"
 
 
-def test_get_policy_assets(mocker):
-    mock_output = '[{"asset": "asset1"}, {"asset": "asset2"}]'
-    mocker.patch("subprocess.run", return_value=mocker.Mock(stdout=mock_output, returncode=0))
-    assets = get_policy_assets("policy_id")
+def test_get_metadata_error(mocker, mock_transaction_id):
+    mocker.patch("requests.get", side_effect=requests.exceptions.RequestException("Connection error"))
+    with pytest.raises(ValueError, match=f"Failed to fetch metadata for transaction {mock_transaction_id}"):
+        get_metadata(mock_transaction_id)
+
+
+def test_get_policy_assets_success(mocker, mock_policy_id):
+    mock_response = [{"asset": "asset1"}, {"asset": "asset2"}]
+    mocker.patch("requests.get", return_value=mocker.Mock(status_code=200, json=lambda: mock_response))
+
+    assets = get_policy_assets(mock_policy_id)
     assert len(assets) == 2
     assert assets[0]["asset"] == "asset1"
     assert assets[1]["asset"] == "asset2"
+
+
+def test_get_policy_assets_error(mocker, mock_policy_id):
+    mocker.patch("requests.get", side_effect=requests.exceptions.RequestException("Connection error"))
+    with pytest.raises(ValueError, match=f"Failed to fetch assets for policy {mock_policy_id}"):
+        get_policy_assets(mock_policy_id)
 
 
 def test_is_nft_transaction(mock_transactions):

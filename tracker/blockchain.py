@@ -1,7 +1,34 @@
 # File: tracker/blockchain.py
 
+import requests
+import os
+from dotenv import load_dotenv
 import subprocess
 import json
+
+# Load environment variables
+load_dotenv()
+
+API_KEY = os.getenv("MAESTRO_API_KEY")
+BASE_URL = "https://preprod.gomaestro-api.org/v1"  # Preprod API endpoint
+
+def get_transactions(address):
+    """
+    Retrieve transactions related to a Cardano address using Maestro API.
+    Args:
+        address (str): Cardano wallet address.
+    Returns:
+        list: List of transactions.
+    """
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    url = f"{BASE_URL}/addresses/{address}/utxos"
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an HTTPError for bad responses
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise ValueError(f"Failed to fetch transactions: {e}")
 
 def run_cli_command(command):
     """
@@ -17,76 +44,42 @@ def run_cli_command(command):
     except subprocess.CalledProcessError as e:
         raise ValueError(f"CLI command failed: {e.stderr}")
 
-def get_transactions(address, socket_path):
-    """
-    Retrieve transactions related to a Cardano address using Cardano CLI.
-    Args:
-        address (str): Cardano wallet address.
-        socket_path (str): Path to the Cardano node socket.
-    Returns:
-        list: List of transactions.
-    """
-    command = [
-        "cardano-cli", "query", "utxo",
-        "--address", address,
-        "--testnet-magic", "1097911063",  # Thay bằng giá trị magic nếu dùng mainnet
-        "--socket-path", socket_path
-    ]
-    try:
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-        raw_output = result.stdout.splitlines()
-        if len(raw_output) <= 2:
-            return []  # Không có giao dịch
-        transactions = []
-        for line in raw_output[2:]:
-            parts = line.split()
-            if len(parts) < 3:
-                continue  # Bỏ qua dòng không hợp lệ
-            transactions.append({
-                "tx_hash": parts[0],
-                "tx_index": parts[1],
-                "amount": parts[2:]
-            })
-        return transactions
-    except subprocess.CalledProcessError as e:
-        raise ValueError(f"Failed to fetch transactions: {e.stderr}")
-
 
 def get_metadata(transaction_id):
     """
-    Retrieve metadata of an NFT transaction using Cardano CLI.
+    Retrieve metadata of a transaction using Maestro API.
     Args:
         transaction_id (str): Transaction ID on the blockchain.
     Returns:
         dict: Metadata of the transaction.
     """
-    command = [
-        "cardano-cli", "query", "tx-metadata",
-        "--tx-in", transaction_id,
-        "--testnet-magic", "1097911063"
-    ]
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    url = f"{BASE_URL}/transactions/{transaction_id}/metadata"
+
     try:
-        return run_cli_command(command)
-    except ValueError as e:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch metadata for transaction {transaction_id}: {e}")
 
 
 def get_policy_assets(policy_id):
     """
-    Retrieve all assets under a specific policy ID using Cardano CLI.
+    Retrieve all assets under a specific policy ID using Maestro API.
     Args:
         policy_id (str): Policy ID.
     Returns:
         list: List of assets.
     """
-    command = [
-        "cardano-cli", "query", "policy-id",
-        "--policy-id", policy_id,
-        "--testnet-magic", "1097911063"
-    ]
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    url = f"{BASE_URL}/policies/{policy_id}/assets"
+
     try:
-        return run_cli_command(command)
-    except ValueError as e:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch assets for policy {policy_id}: {e}")
 
 
